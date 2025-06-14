@@ -12,11 +12,11 @@ export async function POST(req: NextRequest) {
     // For this guide, log payload to console
     const { id } = evt.data;
     const eventType = evt.type;
-    console.log(` event type of ${eventType}`);
+    /*    console.log(` event type of ${eventType}`);
     console.log(
       `Received webhook with ID ${id} and event type of ${eventType}`
     );
-    console.log("Webhook payload:", evt.data);
+    console.log("Webhook payload:", evt.data); */
 
     // When user is created or updated
     if (evt.type === "user.created" || evt.type === "user.updated") {
@@ -31,7 +31,7 @@ export async function POST(req: NextRequest) {
         picture: data.image_url,
       };
 
-      console.log("xxxxxxxxx  processando xxxxxxxxxx");
+      // console.log("xxxxxxxxx  processando xxxxxxxxxx");
 
       // If user data is invalid, exit the function
       if (!user) return;
