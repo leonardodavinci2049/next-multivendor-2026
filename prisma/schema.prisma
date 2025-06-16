@@ -1,32 +1,93 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
-
 generator client {
   provider = "prisma-client-js"
   output   = "../src/generated/prisma"
 }
 
 datasource db {
-  provider = "mysql"
-  url      = env("DATABASE_URL")
+  provider     = "mysql"
+  url          = env("DATABASE_URL")
   relationMode = "prisma"
+}
+
+model tbl_user {
+  id        String   @id @default(uuid())
+  name      String
+  email     String   @unique
+  picture   String   @db.Text
+  role      Role     @default(USER)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
 enum Role {
   USER
   ADMIN
   SELLER
+  CLIENT
 }
 
-model tbl_user {
-  id      String @id @default(uuid())
-  name    String
-  email   String @unique
-  picture String @db.Text
-  role    Role   @default(USER)
+model Category {
+  id       String  @id @default(uuid())
+  name     String
+  image    String
+  url      String  @unique
+  featured Boolean @default(false)
+
+  subCategories SubCategory[] @relation("CategoryToSubcategory")
+
+  products Product[] @relation("CategoryToProduct")
+
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+}
+
+model SubCategory {
+  id       String  @id @default(uuid())
+  name     String
+  image    String
+  url      String  @unique
+  featured Boolean @default(false)
+
+  categoryId String
+  category   Category @relation("CategoryToSubcategory", fields: [categoryId], references: [id])
+
+  products Product[] @relation("SubCategoryToProduct")
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([categoryId])
+}
+
+model Product {
+  id          String @id @default(uuid())
+  name        String
+  description String @db.LongText
+  slug        String @unique
+  brand       String
+  rating      Float  @default(0)
+  sales       Int    @default(0)
+  numReviews  Int    @default(0)
+
+  views Int @default(0)
+
+  freeShippingForAllCountries Boolean @default(false)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now()) @updatedAt
+
+  storeId String
+
+  categoryId String
+  category   Category @relation("CategoryToProduct", fields: [categoryId], references: [id])
+
+  subCategoryId String
+  subCategory   SubCategory @relation("SubCategoryToProduct", fields: [subCategoryId], references: [id])
+
+  offerTagId String?
+
+  @@index([storeId])
+  @@index([categoryId])
+  @@index([subCategoryId])
+  @@index([offerTagId])
 }

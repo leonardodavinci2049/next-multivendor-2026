@@ -1,4 +1,5 @@
-import ThemeToggle from "@/components/theme-toggle";
+
+import ThemeToggle from "@/components/shared/theme-toggle";
 import { Button } from "@/components/ui/button";
 import { UserButton } from "@clerk/nextjs";
 
