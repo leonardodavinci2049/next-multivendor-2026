@@ -10,8 +10,8 @@ export async function POST(req: NextRequest) {
 
     // Do something with payload
     // For this guide, log payload to console
-    const { id } = evt.data;
-    const eventType = evt.type;
+  //  const { id } = evt.data;
+   // const eventType = evt.type;
     /*    console.log(` event type of ${eventType}`);
     console.log(
       `Received webhook with ID ${id} and event type of ${eventType}`
@@ -59,6 +59,20 @@ export async function POST(req: NextRequest) {
         },
       });
     }
+
+    // When user is deleted
+    if (evt.type === "user.deleted") {
+      // Parse the incoming event data to get the user ID
+      const userId =  evt.data.id;
+
+      // Delete the user from the database based on the user ID
+      await cnxDataBase.tbl_user.delete({
+        where: {
+          id: userId,
+        },
+      });
+    }
+
     return new Response("Webhook received", { status: 200 });
   } catch (err) {
     console.error("Error verifying webhook:", err);
