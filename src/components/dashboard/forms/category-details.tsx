@@ -1,8 +1,12 @@
 "use client";
-
-import { Category } from '@/generated/prisma';
+// React
 import React from 'react'
-
+// Prisma model
+import { Category } from '@/generated/prisma';
+// Form handling utilities
+import * as z from "zod";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
 interface CategoryDetailsProps {
   data?: Category;
 }
