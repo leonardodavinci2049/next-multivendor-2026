@@ -1,14 +1,15 @@
 "use server";
 
+
+
 // Clerk
 import { currentUser } from "@clerk/nextjs/server";
 
 // DB
-import { db } from "@/lib/db";
+import cnxDataBase from "@/lib/dbConnection";
 
 // Prisma model
-import { Category } from "@prisma/client";
-
+import { Category } from "@/generated/prisma";
 // Function: upsertCategory
 // Description: Upserts a category into the database, updating if it exists or creating a new one if not.
 // Permission Level: Admin only
@@ -33,7 +34,7 @@ export const upsertCategory = async (category: Category) => {
     if (!category) throw new Error("Please provide category data.");
 
     // Throw error if category with same name or URL already exists
-    const existingCategory = await db.category.findFirst({
+    const existingCategory = await cnxDataBase.category.findFirst({
       where: {
         AND: [
           {
@@ -60,7 +61,7 @@ export const upsertCategory = async (category: Category) => {
     }
 
     // Upsert category into the database
-    const categoryDetails = await db.category.upsert({
+    const categoryDetails = await cnxDataBase.category.upsert({
       where: {
         id: category.id,
       },
@@ -78,12 +79,12 @@ export const upsertCategory = async (category: Category) => {
 // Description: Retrieves all categories from the database.
 // Permission Level: Public
 // Returns: Array of categories sorted by updatedAt date in descending order.
-export const getAllCategories = async (storeUrl?: string) => {
+/* export const getAllCategories = async (storeUrl?: string) => {
   let storeId: string | undefined;
 
   if (storeUrl) {
     // Retrieve the storeId based on the storeUrl
-    const store = await db.store.findUnique({
+    const store = await cnxDataBase.store.findUnique({
       where: { url: storeUrl },
     });
 
@@ -96,7 +97,7 @@ export const getAllCategories = async (storeUrl?: string) => {
   }
 
   // Retrieve all categories from the database
-  const categories = await db.category.findMany({
+  const categories = await cnxDataBase.category.findMany({
     where: storeId
       ? {
           products: {
@@ -115,14 +116,14 @@ export const getAllCategories = async (storeUrl?: string) => {
   });
   return categories;
 };
-
+ */
 // Function: getAllCategoriesForCategory
 // Description: Retrieves all SubCategories fro a category from the database.
 // Permission Level: Public
 // Returns: Array of subCategories of category sorted by updatedAt date in descending order.
 export const getAllCategoriesForCategory = async (categoryId: string) => {
   // Retrieve all subcategories of category from the database
-  const subCategories = await db.subCategory.findMany({
+  const subCategories = await cnxDataBase.subCategory.findMany({
     where: {
       categoryId,
     },
@@ -144,7 +145,7 @@ export const getCategory = async (categoryId: string) => {
   if (!categoryId) throw new Error("Please provide category ID.");
 
   // Retrieve category
-  const category = await db.category.findUnique({
+  const category = await cnxDataBase.category.findUnique({
     where: {
       id: categoryId,
     },
@@ -175,7 +176,7 @@ export const deleteCategory = async (categoryId: string) => {
   if (!categoryId) throw new Error("Please provide category ID.");
 
   // Delete category from the database
-  const response = await db.category.delete({
+  const response = await cnxDataBase.category.delete({
     where: {
       id: categoryId,
     },
